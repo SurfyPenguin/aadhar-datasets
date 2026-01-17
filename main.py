@@ -106,14 +106,23 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown(f"**District-wise {selected_mode}**")
     dist_data = state_data.groupby("district")["total"].sum().reset_index()
-    fig_dist = px.bar(dist_data, x="district", y="total", height=500)
+    fig_dist = px.pie(
+        dist_data, 
+        names="district", 
+        values="total", 
+        title=f"District Distribution in {state_choice}",
+        height=600,
+        hole=0.4
+    )
+    fig_dist.update_traces(textposition='inside', textinfo='percent+label')
+    
     st.plotly_chart(fig_dist, width="stretch")
 
 with col2:
     st.markdown(f"**{state_choice} Timeline**")
     st_trend = state_data.groupby("date")[["age_0_5", "age_5_17", "age_18_greater"]].sum().reset_index()
     st_melt = st_trend.melt(id_vars="date", var_name="Age Group", value_name="Count")
-    fig_st_line = px.line(st_melt, x="date", y="Count", color="Age Group", height=500)
+    fig_st_line = px.line(st_melt, x="date", y="Count", color="Age Group", height=600)
     st.plotly_chart(fig_st_line, width="stretch")
 
 st.subheader("4. Intensity Heatmaps")
