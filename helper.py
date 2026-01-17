@@ -47,7 +47,17 @@ CORRECTIONS = corrections = {
     "Daman & Diu": "Dadra and Nagar Haveli and Daman and Diu",
     "Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu",
     "The Dadra And Nagar Haveli And Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu",
-    "Dadra And Nagar Haveli And Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu"
+    "Dadra And Nagar Haveli And Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu",
+
+    # fix: cities/districts appearing in State Column
+    "West Bengli": "West Bengal",           # Typo
+    "Jaipur": "Rajasthan",                  # City
+    "Nagpur": "Maharashtra",                # City
+    "Darbhanga": "Bihar",                   # District
+    "Madanapalle": "Andhra Pradesh",        # City
+    "Balanagar": "Telangana",               # Locality (Hyderabad)
+    "Raja Annamalai Puram": "Tamil Nadu",   # Locality (Chennai)
+    "Puttenahalli": "Karnataka",            # Locality (Bengaluru)
 }
 
 DISTRICT_CORRECTIONS = {
