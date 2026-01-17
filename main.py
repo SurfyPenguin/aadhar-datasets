@@ -46,10 +46,10 @@ def load_and_clean_data(mode_name):
     
     df = helper.load_csv(config["path"])
     
-    # Standardize column names for consistent plotting
+    # Standardize column names
     df = df.rename(columns=config["col_map"])
     
-    # Fill missing standard columns with 0
+    # Fill missing standard columns
     expected_cols = ["age_0_5", "age_5_17", "age_18_greater"]
     for col in expected_cols:
         if col not in df.columns:
@@ -83,7 +83,7 @@ fig_age = px.bar(
     chart_melt, x="state", y="Count", color="Age Group",
     title=f"{selected_mode} by State & Age", height=600
 )
-st.plotly_chart(fig_age, use_container_width=True)
+st.plotly_chart(fig_age, width="stretch")
 
 st.subheader("2. Trends Over Time")
 trend_data = df.groupby("date")[["age_0_5", "age_5_17", "age_18_greater", "total"]].sum().reset_index()
@@ -93,7 +93,7 @@ fig_trend = px.line(
     trend_melt, x="date", y="Count", color="Category",
     title=f"National {selected_mode} Trends", height=500
 )
-st.plotly_chart(fig_trend, use_container_width=True)
+st.plotly_chart(fig_trend, width="stretch")
 
 st.divider()
 st.subheader("3. State-Level Analysis")
@@ -107,14 +107,14 @@ with col1:
     st.markdown(f"**District-wise {selected_mode}**")
     dist_data = state_data.groupby("district")["total"].sum().reset_index()
     fig_dist = px.bar(dist_data, x="district", y="total", height=500)
-    st.plotly_chart(fig_dist, use_container_width=True)
+    st.plotly_chart(fig_dist, width="stretch")
 
 with col2:
     st.markdown(f"**{state_choice} Timeline**")
     st_trend = state_data.groupby("date")[["age_0_5", "age_5_17", "age_18_greater"]].sum().reset_index()
     st_melt = st_trend.melt(id_vars="date", var_name="Age Group", value_name="Count")
     fig_st_line = px.line(st_melt, x="date", y="Count", color="Age Group", height=500)
-    st.plotly_chart(fig_st_line, use_container_width=True)
+    st.plotly_chart(fig_st_line, width="stretch")
 
 st.subheader("4. Intensity Heatmaps")
 st.write("#### By Month (Seasonality)")
@@ -132,4 +132,4 @@ fig_heat = px.imshow(
     color_continuous_scale="RdBu_r",
     aspect="auto", height=800
 )
-st.plotly_chart(fig_heat, use_container_width=True)
+st.plotly_chart(fig_heat, width="stretch")
