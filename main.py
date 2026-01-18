@@ -85,6 +85,75 @@ fig_age = px.bar(
 )
 st.plotly_chart(fig_age, width="stretch")
 
+# states with low enrollment
+st.subheader(f"States with low {selected_mode.lower()} (< 20%)")
+required_stats = df.groupby("state")["total"].sum().reset_index()
+state_total = df["total"].sum()
+required_stats["percentage"] = (required_stats["total"] / state_total) * 100
+
+low_state_rates = required_stats[required_stats["percentage"] < 20].sort_values("percentage", ascending=True)
+
+if not low_state_rates.empty:
+    st.warning(f"States with < 20% {selected_mode.lower()}")
+    display_table = low_state_rates[["state", "total", "percentage"]].copy()
+    display_table.columns = ["State", "Total", "Percentage (%)"]
+    display_table["Percentage (%)"] = display_table["Percentage (%)"].map("{:.2f}%".format)
+    display_table["Total"] = display_table["Total"].map("{:,}".format)
+
+    st.dataframe(display_table, width="stretch", hide_index=True)
+
+else:
+    st.success(f"States with < 20% {selected_mode.lower()}")
+
+# states with low youth enrollment
+st.subheader(f"States with Low youth {selected_mode.lower()} (< 20%)")
+
+# group by state
+state_stats = df.groupby("state")[["age_0_5", "age_5_17", "total"]].sum().reset_index()
+state_stats["youth_total"] = state_stats["age_0_5"] + state_stats["age_5_17"]
+state_stats["youth_percentage"] = (state_stats["youth_total"] / state_stats["total"]) * 100
+
+# filter states with < 20% youth enrollment/update
+low_youth_rates = state_stats[state_stats["youth_percentage"] < 20].sort_values("youth_percentage", ascending=True)
+
+if not low_youth_rates.empty:
+    st.warning(f"States with < 20% youth {selected_mode.lower()}")
+    display_table = low_youth_rates[["state", "total", "youth_percentage"]].copy()
+    display_table.columns = ["State", "Total", "Youth % (0-17)"]
+    display_table["Youth % (0-17)"] = display_table["Youth % (0-17)"].map("{:.2f}%".format)
+    display_table["Total"] = display_table["Total"].map("{:,}".format)
+
+    st.dataframe(display_table, width="stretch", hide_index=True)
+
+else:
+    st.success(f"States with < 20% youth {selected_mode.lower()}")
+
+# districts with low youth enrollment/update
+st.subheader(f"Districts with Low youth {selected_mode.lower()} (< 20%)")
+
+# group by both State and district so we don't lose the State name
+district_stats = df.groupby(["state", "district"])[["age_0_5", "age_5_17", "total"]].sum().reset_index()
+
+district_stats["youth_total"] = district_stats["age_0_5"] + district_stats["age_5_17"]
+district_stats["youth_percentage"] = (district_stats["youth_total"] / district_stats["total"]) * 100
+
+low_youth_rates_district = district_stats[district_stats["youth_percentage"] < 20].sort_values("youth_percentage", ascending=True)
+
+if not low_youth_rates_district.empty:
+    st.warning(f"Districts with < 20% {selected_mode.lower()}")
+    display_table = low_youth_rates_district[["state", "district", "total", "youth_percentage"]].copy()
+    
+    # format for clean display
+    display_table.columns = ["State", "District", "Total", "Youth % (0-17)"]
+    display_table["Youth % (0-17)"] = display_table["Youth % (0-17)"].map("{:.2f}%".format)
+    display_table["Total"] = display_table["Total"].map("{:,}".format)
+
+    st.dataframe(display_table, width="stretch", hide_index=True)
+
+else:
+    st.success(f"No districts with youth < 20% {selected_mode.lower()}")
+
+
 st.subheader("2. Trends Over Time")
 trend_data = df.groupby("date")[["age_0_5", "age_5_17", "age_18_greater", "total"]].sum().reset_index()
 trend_melt = trend_data.melt(id_vars="date", var_name="Category", value_name="Count")
