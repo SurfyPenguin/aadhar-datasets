@@ -38,6 +38,7 @@ CORRECTIONS = corrections = {
     "Andaman & Nicobar Islands": "Andaman and Nicobar Islands",
     
     # lowercasing "And" from J&K
+    "?": "Unknown",
     "Jammu And Kashmir": "Jammu and Kashmir",
     "Andaman And Nicobar Islands": "Andaman and Nicobar Islands",
 
@@ -69,6 +70,7 @@ DISTRICT_CORRECTIONS = {
     "Diu": "Dadra and Nagar Haveli and Daman and Diu",
     "The Dadra And Nagar Haveli And Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu",
     "Dadra And Nagar Haveli And Daman And Diu": "Dadra and Nagar Haveli and Daman and Diu",
+    "?": "Unknown",
 }
 
 @st.cache_data
@@ -96,8 +98,8 @@ def filter_state_data(df: pd.DataFrame) -> pd.DataFrame:
     # Remove numeric state values (filtering)
     df = df[~df["state"].astype(str).str.isnumeric()]
 
-    # Normalize capitalization (title case)
-    df.loc[:, "state"] = df.loc[:, "state"].str.title().str.strip()
+    # Normalize capitalization (title case) & any leadig / trailing asterisks
+    df.loc[:, "state"] = df.loc[:, "state"].str.title().str.replace("*", "", regex=False).str.strip()
 
     # Apply the dictionary corrections
     df.loc[:, "state"] = df.loc[:, "state"].replace(CORRECTIONS)
@@ -118,8 +120,8 @@ def filter_district_data(df: pd.DataFrame) -> pd.DataFrame:
     # Remove numeric state values (filtering)
     df = df[~df["district"].astype(str).str.isnumeric()]
 
-    # Normalize capitalization (title case)
-    df.loc[:, "district"] = df.loc[:, "district"].str.title().str.strip()
+    # Normalize capitalization (title case) & any leadig / trailing asterisks
+    df.loc[:, "district"] = df.loc[:, "district"].str.title().str.replace("*", "", regex=False).str.strip()
 
     # Apply the dictionary corrections
     df.loc[:, "district"] = df.loc[:, "district"].replace(DISTRICT_CORRECTIONS)
