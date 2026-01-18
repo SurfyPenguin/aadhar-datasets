@@ -77,10 +77,11 @@ st.markdown(f"**Total Processed:** {df['total'].sum():,}")
 
 st.subheader("1. Age Group Distribution by State")
 chart_data = df.groupby("state")[["age_0_5", "age_5_17", "age_18_greater"]].sum().reset_index()
-chart_melt = chart_data.melt(id_vars="state", var_name="Age Group", value_name="Count")
+chart_data.columns = ["State", "Age (0-5)", "Age (5-17)", "Age (>18)"]
+chart_melt = chart_data.melt(id_vars="State", var_name="Age Group", value_name="Count")
 
 fig_age = px.bar(
-    chart_melt, x="state", y="Count", color="Age Group",
+    chart_melt, x="State", y="Count", color="Age Group",
     title=f"{selected_mode} by State & Age", height=600
 )
 st.plotly_chart(fig_age, width="stretch")
@@ -156,10 +157,11 @@ else:
 
 st.subheader("2. Trends Over Time")
 trend_data = df.groupby("date")[["age_0_5", "age_5_17", "age_18_greater", "total"]].sum().reset_index()
-trend_melt = trend_data.melt(id_vars="date", var_name="Category", value_name="Count")
+trend_data.columns = ["Date", "Age (0-5)", "Age (5-17)", "Age (>18)", "Total"]
+trend_melt = trend_data.melt(id_vars="Date", var_name="Category", value_name="Count")
 
 fig_trend = px.line(
-    trend_melt, x="date", y="Count", color="Category",
+    trend_melt, x="Date", y="Count", color="Category",
     title=f"National {selected_mode} Trends", height=500
 )
 st.plotly_chart(fig_trend, width="stretch")
@@ -190,8 +192,9 @@ with col1:
 with col2:
     st.markdown(f"**{state_choice} Timeline**")
     st_trend = state_data.groupby("date")[["age_0_5", "age_5_17", "age_18_greater"]].sum().reset_index()
-    st_melt = st_trend.melt(id_vars="date", var_name="Age Group", value_name="Count")
-    fig_st_line = px.line(st_melt, x="date", y="Count", color="Age Group", height=600)
+    st_trend.columns = ["Date", "Age (0-5)", "Age (5-17)", "Age (>18)"]
+    st_melt = st_trend.melt(id_vars="Date", var_name="Age Group", value_name="Count")
+    fig_st_line = px.line(st_melt, x="Date", y="Count", color="Age Group", height=600)
     st.plotly_chart(fig_st_line, width="stretch")
 
 st.subheader("4. Intensity Heatmaps")
